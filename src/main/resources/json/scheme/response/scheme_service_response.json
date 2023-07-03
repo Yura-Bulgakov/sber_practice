@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Схема ответа от проекта для практики",
+  "$ref": "#/definitions/serviceResponse",
+  "definitions": {
+    "serviceResponse": {
+      "type": "object",
+      "properties": {
+        "header": {
+          "description": "Заголовок",
+          "type": "object",
+          "properties": {
+            "timestampResponse": {
+              "description": "Время формирования ответа",
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "payload": {
+          "description": "Сообщение",
+          "type": "object",
+          "properties": {
+            "response": {
+              "description": "Ответ от сервиса",
+              "type": "object",
+              "properties": {
+                "dealResult": {
+                  "description": "Статус расчета",
+                  "type": "object",
+                  "properties": {
+                    "systemErrors": {
+                      "description": "Список ошибок обработки",
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions/SystemErrorType"
+                          }
+                        }
+                      }
+                    },
+                    "status": {
+                      "description": "Статус оценки по сделке",
+                      "type": "string",
+                      "maxLength": 20,
+                      "enum": [
+                        "OK",
+                        "ERROR"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                },
+                "participantResults": {
+                  "description": "Список результатов оценки по участникам сделки",
+                  "type": "object",
+                  "properties": {
+                    "participantResult": {
+                      "description": "Список результатов оценки по участнику сделки",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/ParticipantListResultType"
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "dealResult"
+              ]
+            }
+          }
+        }
+      },
+      "required": [
+        "header",
+        "payload"
+      ]
+    },
+
+    "SystemErrorType": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Код ошибки",
+          "type": "string",
+          "maxLength": 50
+        },
+        "message": {
+          "description": "Описание ошибки",
+          "type": "string",
+          "maxLength": 2000
+        },
+        "cause": {
+          "description": "Причина ошибки",
+          "type": "string",
+          "maxLength": 2000
+        }
+      }
+    },
+
+    "ParticipantListResultType": {
+      "type": "object",
+      "properties": {
+        "participantIndex": {
+          "description": "Уникальный индекс участника в сделке",
+          "type": "integer"
+        },
+        "status": {
+          "description": "Статус результата оценки для участника сделки",
+          "type": "string",
+          "maxLength": 20,
+          "enum": [
+            "OK",
+            "ERROR"
+          ]
+        },
+        "refinPermission": {
+          "description": "Право клиента на рефинансирование",
+          "type": "boolean"
+        },
+        "creditPotentialData": {
+          "description": "Блок с данными кредитного потенциала",
+          "type": "object",
+          "properties": {
+            "availableTotalSum": {
+              "description": "Сумма доступной части КП",
+              "type": "number"
+            }
+          }
+        }
+      },
+      "required": [
+        "participantIndex",
+        "status"
+      ]
+    }
+  }
+}

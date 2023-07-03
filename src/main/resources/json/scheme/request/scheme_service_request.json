@@ -1,0 +1,511 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Схема запроса в проект для практики",
+  "$ref": "#/definitions/serviceRequest",
+  "definitions": {
+    "serviceRequest": {
+      "type": "object",
+      "properties": {
+        "header": {
+          "description": "Заголовок",
+          "type": "object",
+          "properties": {
+            "timestampRequest": {
+              "description": "Время получения запроса",
+              "type": "string",
+              "format": "date-time"
+            },
+            "processing": {
+              "description": "Запрос на оценку",
+              "type": "object",
+              "properties": {
+                "uid": {
+                  "description": "Уникальный в рамках системы-источника идентификатор запроса",
+                  "type": "string"
+                },
+                "sourceSystem": {
+                  "description": "Система-источник запроса",
+                  "type": "string",
+                  "enum": [
+                    "CC",
+                    "CPTRIGGER",
+                    "AUTO"
+                  ]
+                }
+              },
+              "required": [
+                "uid",
+                "sourceSystem"
+              ]
+            }
+          },
+          "required": [
+            "processing"
+          ]
+        },
+        "payload": {
+          "description": "Сообщение",
+          "type": "object",
+          "properties": {
+            "request": {
+              "description": "Запрос в сервис",
+              "type": "object",
+              "properties": {
+                "applicationChannel": {
+                  "description": "Код способа подачи заявления",
+                  "type": "string",
+                  "maxLength": 2
+                },
+                "application": {
+                  "description": "Информация о заявке на кредит",
+                  "type": "object",
+                  "properties": {
+                    "appDate": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "appNumber": {
+                      "description": "Номер Заявления-анкеты на получение кредита",
+                      "type": "string"
+                    },
+                    "entityId": {
+                      "description": "Идентификатор заявки на КП",
+                      "type": "string",
+                      "maxLength": 32
+                    },
+                    "isExpress": {
+                      "description": "Флаг экспресс кредитования (true - экспресс)",
+                      "type": "boolean"
+                    },
+                    "appRequestType": {
+                      "description": "Тип запроса: 1 - Короткая анкета 2 - Предварительный расчёт 3 - Полная заявка",
+                      "type": "integer"
+                    },
+                    "cpProductsInfo": {
+                      "$ref": "#/definitions/CpProductsInfoList"
+                    },
+                    "appOffice": {
+                      "type": "object",
+                      "properties": {
+                        "regionBankID": {
+                          "description": "Код территориального банка",
+                          "type": "string",
+                          "maxLength": 2
+                        },
+                        "branchID": {
+                          "description": "Код ОСБ",
+                          "type": "string",
+                          "maxLength": 4
+                        },
+                        "additionalOfficeID": {
+                          "description": "Номер ВСП",
+                          "type": "string",
+                          "maxLength": 5
+                        }
+                      },
+                      "required": [
+                        "regionBankID",
+                        "branchID",
+                        "additionalOfficeID"
+                      ]
+                    },
+                    "channelSales": {
+                      "description": "Канал продаж",
+                      "type": "integer"
+                    },
+                    "currency": {
+                      "description": "Валюта кредита: RUB - Российский рубль EUR - Евро USD - Доллар США",
+                      "type": "string"
+                    },
+                    "amount": {
+                      "description": "Сумма кредита",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "appDate",
+                    "appNumber",
+                    "appOffice"
+                  ]
+                },
+                "participants": {
+                  "description": "Участники сделки",
+                  "type": "object",
+                  "properties": {
+                    "participant": {
+                      "description": "Участник сделки",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/definitions/ParticipantType"
+                      }
+                    }
+                  },
+                  "required": [
+                    "participant"
+                  ]
+                }
+              },
+              "required": [
+                "participants"
+              ]
+            }
+          }
+        }
+      },
+      "required": [
+        "header",
+        "payload"
+      ]
+    },
+
+    "ParticipantType": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "description": "Порядковый номер участника сделки",
+          "type": "integer"
+        },
+        "role": {
+          "description": "Роль в сделке",
+          "type": "string"
+        },
+        "status": {
+          "description": "Статус в сделке",
+          "type": "string"
+        },
+        "naturalPerson": {
+          "description": "Физическое лицо",
+          "type": "object",
+          "properties": {
+            "INN": {
+              "description": "ИНН",
+              "type": "string",
+              "minLength": 12,
+              "maxLength": 12,
+              "pattern": "^[0-9]+$"
+            },
+            "gender": {
+              "description": "Пол участника по сделки: 1 - Мужской 2 - Женский",
+              "type": "string"
+            },
+            "citizenship": {
+              "description": "Гражданство: RUSSIA - Российское, OTHER - Другое",
+              "type": "string"
+            },
+            "birthPlace": {
+              "description": "Место рождения",
+              "type": "string",
+              "maxLength": 150
+            },
+            "maritalStatus": {
+              "description": "Семейное положение: 1 - Холост/не замужем 2 - Разведён/разведена 3 - Женат/замужем",
+              "type": "integer"
+            },
+            "currentPersonData": {
+              "description": "Текущие персональные данные участника сделки",
+              "type": "object",
+              "properties": {
+                "firstName": {
+                  "description": "Имя",
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "lastName": {
+                  "description": "Фамилия",
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "middleName": {
+                  "description": "Отчество",
+                  "type": "string",
+                  "maxLength": 40
+                },
+                "birthDate": {
+                  "type": "string",
+                  "format": "date"
+                }
+              },
+              "required": [
+                "firstName",
+                "lastName",
+                "birthDate"
+              ]
+            },
+            "primaryID": {
+              "description": "Основной документ",
+              "type": "object",
+              "properties": {
+                "idType": {
+                  "description": "Код вида основного документа",
+                  "type": "string",
+                  "maxLength": 2
+                },
+                "serie": {
+                  "description": "Серия документа",
+                  "type": "string",
+                  "maxLength": 20
+                },
+                "number": {
+                  "description": "Номер документа",
+                  "type": "string",
+                  "maxLength": 20
+                },
+                "issueLocation": {
+                  "description": "Место выдачи документа",
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "issueDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "issueAuthority": {
+                  "description": "Наименование органа, выдавшего документ",
+                  "type": "string",
+                  "maxLength": 160
+                },
+                "authorityCode": {
+                  "description": "Код подразделения",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "idType",
+                "number",
+                "issueDate",
+                "issueAuthority"
+              ]
+            },
+            "addresses": {
+              "$ref": "#/definitions/AddressBlockType"
+            },
+            "phones": {
+              "$ref": "#/definitions/PhonesType"
+            },
+            "income": {
+              "description": "Доход",
+              "type": "number"
+            },
+            "insuranceNumber": {
+              "description": "СНИЛС (Номер пенсионного страхового свидетельства)",
+              "type": "string",
+              "maxLength": 14,
+              "pattern": "^\\d{3}-\\d{3}-\\d{3} \\d{2}$"
+            },
+            "email": {
+              "description": "Email",
+              "type": "string",
+              "maxLength": 50
+            },
+            "educationStatus": {
+              "description": "Образование: 1 - Учёная степень 2 - Второе высшее 3 - Высшее 4 - Незаконченное высшее 5 - Среднее специальное 6 - Среднее",
+              "type": "integer"
+            },
+            "age": {
+              "description": "Возраст",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "currentPersonData"
+          ]
+        }
+      },
+      "required": [
+        "index",
+        "role",
+        "status",
+        "naturalPerson"
+      ]
+    },
+
+    "AddressBlockType": {
+      "description": "Блок адресов по клиенту",
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Адрес",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/AddressType"
+          }
+        }
+      },
+      "required": [
+        "address"
+      ]
+    },
+    "AddressType": {
+      "type": "object",
+      "properties": {
+        "captionID": {
+          "description": "Тип адреса: HOME - Адрес фактического проживания WORK - Рабочий OTHER - Другой",
+          "type": "string"
+        },
+        "postalCode": {
+          "description": "Почтовый индекс",
+          "type": "string"
+        },
+        "region": {
+          "description": "Регион",
+          "type": "object",
+          "properties": {
+            "regionID": {
+              "description": "Идентификатор региона",
+              "type": "string",
+              "maxLength": 4
+            },
+            "regionName": {
+              "description": "Название региона",
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          "required": [
+            "regionID"
+          ]
+        },
+        "city": {
+          "description": "Название города",
+          "type": "string",
+          "maxLength": 50
+        },
+        "street": {
+          "description": "Наименование улицы",
+          "type": "string",
+          "maxLength": 50
+        },
+        "houseNumber": {
+          "description": "Номер дома",
+          "type": "string",
+          "maxLength": 20
+        },
+        "buildingNumber": {
+          "description": "Номер корпуса",
+          "type": "string",
+          "maxLength": 20
+        },
+        "blockNumber": {
+          "description": "Номер строения",
+          "type": "string",
+          "maxLength": 20
+        },
+        "flatNumber": {
+          "description": "Номер квартиры",
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "required": [
+        "captionID",
+        "region"
+      ]
+    },
+
+    "PhonesType": {
+      "description": "Блок телефонов",
+      "type": "object",
+      "properties": {
+        "phone": {
+          "description": "Телефон",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/PhoneType"
+          }
+        }
+      },
+      "required": [
+        "phone"
+      ]
+    },
+    "PhoneType": {
+      "type": "object",
+      "properties": {
+        "phoneIndex": {
+          "description": "Порядковый номер телефона",
+          "type": "number"
+        },
+        "phoneDestinationType": {
+          "description": "Тип назначения телефона: 1 - Мобильный, 2 - Городской",
+          "type": "integer"
+        },
+        "phoneNumber": {
+          "description": "Номер телефона",
+          "type": "string",
+          "maxLength": 18,
+          "pattern": "^[0-9]+$"
+        },
+        "countryPrefix": {
+          "description": "Код страны",
+          "type": "string",
+          "maxLength": 4
+        },
+        "cityPrefix": {
+          "description": "Код города",
+          "type": "string",
+          "maxLength": 7
+        },
+        "abonentNumber": {
+          "description": "Номер телефона без кода города и без кода страны",
+          "type": "string",
+          "maxLength": 7
+        }
+      },
+      "required": [
+        "phoneIndex",
+        "phoneDestinationType",
+        "phoneNumber"
+      ]
+    },
+
+    "CpProductsInfoList": {
+      "description": "Предодобренные продукты для расчета КП",
+      "type": "object",
+      "properties": {
+        "cpProductInfo": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/ProductInfoType"
+          }
+        }
+      },
+      "required": [
+        "cpProductInfo"
+      ]
+    },
+    "ProductInfoType": {
+      "description": "Предодобренный продукт для расчета КП",
+      "type": "object",
+      "properties": {
+        "productType": {
+          "description": "Тип продукта. Возможные значения: 1 - Потребительское кредитование 2 - Автокредит 3 - Банковские карты",
+          "type": "string",
+          "maxLength": 10
+        },
+        "productCode": {
+          "description": "Код продукта",
+          "type": "string",
+          "maxLength": 10
+        },
+        "subproductCode": {
+          "description": "Код субпродукта",
+          "type": "string",
+          "maxLength": 10
+        },
+        "cashAmount": {
+          "description": "Сумма наличными",
+          "type": "number"
+        }
+      },
+      "required": [
+        "productType",
+        "productCode",
+        "subproductCode"
+      ]
+    }
+  }
+}
