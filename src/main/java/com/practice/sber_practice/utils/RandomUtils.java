@@ -1,9 +1,13 @@
-package com.practice.sber_practice;
+package com.practice.sber_practice.utils;
 
+import java.math.BigDecimal;
 import java.util.Random;
 
-public class ParentIdGenerator {
-    private static final Random RANDOM = new Random();
+public abstract class RandomUtils {
+
+    public static final Random RANDOM = new Random();
+
+
     public static String generateRandomString(int maxLength) {
         char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".toCharArray();
         StringBuilder sb = new StringBuilder();
@@ -14,4 +18,8 @@ public class ParentIdGenerator {
         }
         return sb.toString();
     }
+    public static BigDecimal generateRandomBigDecimal(int max) {
+        return BigDecimal.valueOf(RANDOM.nextDouble() * max);
+    }
+
 }

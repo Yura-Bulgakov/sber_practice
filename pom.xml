@@ -8,15 +8,59 @@
 		<version>2.7.13</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>com.practice</groupId>
 	<artifactId>sber_practice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>sber_practice</name>
 	<description>Project for Spring Boot</description>
+
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
+		<camunda.spring.boot.starter.test.version>3.2.0</camunda.spring.boot.starter.test.version>
+		<camunda.engine.spring.version>7.13.0</camunda.engine.spring.version>
+		<spring-boot.version>2.7.13</spring-boot.version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
+		<dependency>
+			<groupId>org.camunda.bpm</groupId>
+			<artifactId>camunda-engine-spring</artifactId>
+			<version>${camunda.engine.spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.camunda.bpm.springboot</groupId>
+			<artifactId>camunda-bpm-spring-boot-starter-test</artifactId>
+			<version>${camunda.engine.spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.camunda.bpm.springboot</groupId>-->
+<!--			<artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>-->
+<!--			<version>${camunda.spring-boot.version}</version>-->
+<!--		</dependency>-->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.3.6</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
@@ -51,6 +95,22 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>2.14.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>5.3.28</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>5.3.28</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.12.0</version> <!-- Вы можете изменить версию по своему усмотрению -->
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -60,6 +120,10 @@
 				<artifactId>jsonschema2pojo-maven-plugin</artifactId>
 				<version>1.2.1</version>
 				<configuration>
+					<generateBuilders>true</generateBuilders> <!-- Добавьте эту настройку -->
+
+					<serializable>true</serializable> <!-- Add this line -->
+
 					<dateTimeType>java.time.LocalDateTime</dateTimeType>
 					<useBigDecimals>true</useBigDecimals>
 					<formatDates>true</formatDates>
@@ -74,11 +138,6 @@
 				</configuration>
 				<executions>
 					<execution>
-<!--						<id>1</id>-->
-<!--							<configuration>-->
-<!--								<sourceDirectory>${basedir}/src/main/resources/json/scheme</sourceDirectory>-->
-<!--								<targetPackage>com.practice.sber_practice.pojo_scheme</targetPackage>-->
-<!--							</configuration>-->
 						<goals>
 							<goal>generate</goal>
 						</goals>
