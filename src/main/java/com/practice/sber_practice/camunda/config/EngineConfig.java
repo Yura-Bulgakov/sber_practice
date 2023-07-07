@@ -93,10 +93,6 @@ public class EngineConfig {
         return processEngine.getManagementService();
     }
 
-    @Bean
-    public ProcessRequestDelegate processRequestDelegate(){
-        return new ProcessRequestDelegate();
-    }
 
     @Bean
     public CamundaRequestProcess camundaRequestProcess(){ return new CamundaRequestProcess();}

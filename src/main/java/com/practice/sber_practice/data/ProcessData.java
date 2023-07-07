@@ -14,6 +14,8 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @Builder
 public class ProcessData implements Serializable {
+    private String serviceRequestString;
     private ServiceRequest serviceRequest;
+
     private ServiceResponse serviceResponse;
 }

@@ -31,12 +31,13 @@ public class CamundaRequestProcess implements RequestProcessService{
 
 
     @Override
-    public ServiceResponse processRequest(ServiceRequest request) {
-        ProcessData processData = ProcessData.builder().serviceRequest(request).build();
+    public ServiceResponse processRequest(String requestString) {
+
+        ProcessData processData = ProcessData.builder().build();
         String parentId = RandomParentIdGenerator.getParentId(5);
         dataStore.put(parentId, processData);
         Map<String, Object> varMap = new HashMap<>();
-        varMap.put(KeyStoreClass.VAR_MAP_KEY, dataStore);
+        varMap.put(KeyStoreClass.REQUEST_STRING_KEY, requestString);
         varMap.put(KeyStoreClass.PARENT_ID_KEY, parentId);
 
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(BUSINESS_KEY, varMap);

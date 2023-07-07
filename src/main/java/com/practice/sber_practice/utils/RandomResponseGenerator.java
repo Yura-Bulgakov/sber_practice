@@ -1,12 +1,13 @@
 package com.practice.sber_practice.utils;
 
 import com.practice.sber_practice.pojo_scheme.response.*;
+import lombok.experimental.UtilityClass;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@UtilityClass
 public class RandomResponseGenerator {
 
     public static ServiceResponse generateRandomResponse() {

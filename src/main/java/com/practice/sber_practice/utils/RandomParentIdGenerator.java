@@ -1,7 +1,9 @@
 package com.practice.sber_practice.utils;
 
-public class RandomParentIdGenerator {
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
+public class RandomParentIdGenerator {
 
     public static String getParentId(int maxLength){
         String parentId = RandomUtils.generateRandomString(maxLength);

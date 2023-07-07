@@ -1,9 +1,12 @@
 package com.practice.sber_practice.utils;
 
+import lombok.experimental.UtilityClass;
+
 import java.math.BigDecimal;
 import java.util.Random;
 
-public abstract class RandomUtils {
+@UtilityClass
+public class RandomUtils {
 
     public static final Random RANDOM = new Random();
 
