@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Схема ответа от сервиса TotalSum по клиенту",
+  "$ref": "#/definitions/totalSumRs",
+  "definitions": {
+    "totalSumRs": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "description": "Статус результата оценки для клиента",
+          "type": "string",
+          "maxLength": 20,
+          "enum": [
+            "OK",
+            "ERROR"
+          ]
+        },
+        "totalSum": {
+          "description": "Сумма доступной части КП",
+          "type": "number"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    }
+  }
+}

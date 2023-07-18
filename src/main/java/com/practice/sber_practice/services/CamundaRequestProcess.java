@@ -33,7 +33,7 @@ public class CamundaRequestProcess implements RequestProcessService{
     @Override
     public ServiceResponse processRequest(String requestString) {
 
-        ProcessData processData = ProcessData.builder().build();
+        ProcessData processData = ProcessData.builder().serviceRequestString(requestString).build();
         String parentId = RandomParentIdGenerator.getParentId(5);
         dataStore.put(parentId, processData);
         Map<String, Object> varMap = new HashMap<>();

@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Схема запроса в сервис TotalSum",
+  "$ref": "#/definitions/totalSumRq",
+  "definitions": {
+    "totalSumRq": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "description": "Уникальный id запроса",
+          "type": "string"
+        },
+        "personFirstName": {
+          "description": "Имя",
+          "type": "string",
+          "maxLength": 40
+        },
+        "personLastName": {
+          "description": "Фамилия",
+          "type": "string",
+          "maxLength": 40
+        },
+        "personMiddleName": {
+          "description": "Отчество",
+          "type": "string",
+          "maxLength": 40
+        },
+        "personBirthDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "primaryIdType": {
+          "description": "Код вида основного документа",
+          "type": "string",
+          "maxLength": 2
+        },
+        "primaryIdSerie": {
+          "description": "Серия документа",
+          "type": "string",
+          "maxLength": 20
+        },
+        "primaryIdNumber": {
+          "description": "Номер документа",
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "required": [
+        "requestId",
+        "primaryIdType",
+        "primaryIdSerie",
+        "primaryIdNumber"
+      ]
+    }
+  }
+}
