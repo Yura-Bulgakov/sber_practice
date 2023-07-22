@@ -5,3 +5,9 @@ camunda.bpm:
     firstName: Demo
   filter:
     create: All tasks
+
+cp.rest.uries:
+  prodcat:
+    host: localhost
+    port: 8080
+    timeout: 10000
