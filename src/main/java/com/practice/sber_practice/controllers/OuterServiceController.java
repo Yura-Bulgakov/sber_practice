@@ -10,16 +10,15 @@ import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 
 @RestController
+@Slf4j
 public class OuterServiceController {
 
 //    @RequestBody TotalSumRq totalSumRq
@@ -33,9 +32,10 @@ public class OuterServiceController {
     }
 
     @GetMapping("/extract")
-    public ResponseEntity<TotalSumRs> handleServiceRequest() throws JsonProcessingException {
+    public ResponseEntity<TotalSumRs> handleServiceRequest(@RequestParam("requestID") String requestID) throws JsonProcessingException {
 
         if (bucket.tryConsume(1)){
+            log.info("Обработка запроса с id {} во внешней системе", requestID);
             return ResponseEntity.ok(TotalSumResponseGenerator.generateTotalSumResponce());
         }
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();

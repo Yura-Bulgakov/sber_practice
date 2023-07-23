@@ -6,6 +6,7 @@ import com.practice.sber_practice.data.ProcessData;
 import com.practice.sber_practice.data.storage.DataStore;
 import com.practice.sber_practice.pojo_scheme.request.ServiceRequest;
 import com.practice.sber_practice.pojo_scheme.response.ServiceResponse;
+import com.practice.sber_practice.utils.CamundaFlowEndExpectant;
 import com.practice.sber_practice.utils.RandomParentIdGenerator;
 import lombok.Setter;
 import org.camunda.bpm.engine.RuntimeService;
@@ -14,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 
 
-
-public class CamundaRequestProcess implements RequestProcessService{
+public class CamundaRequestProcess implements AsyncRequestProcessService{
 
     private static final String BUSINESS_KEY = "sberPracticeBuisnessKey";
 
@@ -31,7 +32,7 @@ public class CamundaRequestProcess implements RequestProcessService{
 
 
     @Override
-    public ServiceResponse processRequest(String requestString) {
+    public CompletableFuture<ServiceResponse>  processRequest(String requestString) {
 
         ProcessData processData = ProcessData.builder().serviceRequestString(requestString).build();
         String parentId = RandomParentIdGenerator.getParentId(5);
@@ -41,18 +42,13 @@ public class CamundaRequestProcess implements RequestProcessService{
         varMap.put(KeyStoreClass.PARENT_ID_KEY, parentId);
 
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(BUSINESS_KEY, varMap);
-        while (!processInstance.isEnded()){
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-        }
+        boolean isFlowEnd = CamundaFlowEndExpectant.isFlowEnded(processInstance);
+
         ServiceResponse serviceResponse = dataStore.get(parentId).getServiceResponse();
         dataStore.remove(parentId);
-
-        return serviceResponse;
+        CompletableFuture<ServiceResponse> futureResult = new CompletableFuture<>();
+        futureResult.complete(serviceResponse);
+        return futureResult;
     }
 
 

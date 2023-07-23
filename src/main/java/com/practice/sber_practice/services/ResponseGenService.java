@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ResponceGenService {
+public class ResponseGenService {
 
     public ServiceResponse generateServiceResponse(TotalSumRs totalSumRs){
         ParticipantListResultType participant = ServiceResponceMapper.INSTANCE.mapToServiceResponse(totalSumRs);
