@@ -16,6 +16,9 @@ import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
+
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 
 public class CamundaRequestProcess implements AsyncRequestProcessService{
@@ -42,13 +45,15 @@ public class CamundaRequestProcess implements AsyncRequestProcessService{
         varMap.put(KeyStoreClass.PARENT_ID_KEY, parentId);
 
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(BUSINESS_KEY, varMap);
-        boolean isFlowEnd = CamundaFlowEndExpectant.isFlowEnded(processInstance);
-
-        ServiceResponse serviceResponse = dataStore.get(parentId).getServiceResponse();
-        dataStore.remove(parentId);
-        CompletableFuture<ServiceResponse> futureResult = new CompletableFuture<>();
-        futureResult.complete(serviceResponse);
-        return futureResult;
+        return CompletableFuture.supplyAsync(new Supplier<ServiceResponse>() {
+            @Override
+            public ServiceResponse get() {
+                boolean isFlowEnd = CamundaFlowEndExpectant.isFlowEnded(processInstance);
+                ServiceResponse serviceResponse = dataStore.get(parentId).getServiceResponse();
+                dataStore.remove(parentId);
+                return serviceResponse;
+            }
+        });
     }
 
 
